@@ -1,38 +1,49 @@
 import streamlit as st
 import random
 
-# Título de la App
+# Configuración visual de la App
 st.set_page_config(page_title="Plan Flor del Consuelo", page_icon="🥗")
-st.title("🍎 Planificador de Dieta Post-Op")
+st.title("🍎 Planificador de Dieta: Flor del Consuelo")
 
-# --- BASE DE DATOS FILTRADA (SIN ASTERISCOS) ---
-# Se excluyen alimentos marcados con precaución (*) en las fotos
+# --- BASE DE DATOS (Filtrada: SE EXCLUYEN alimentos con asterisco *) ---
 alimentos = {
-    "AOAV": ["Clara de huevo", "Alubias/Lentejas", "Soya texturizada", "Queso Panela", "Requesón", "Pollo (sin piel)", "Pescado blanco"],
-    "Cereales": ["Elote desgranado", "Papa cocida", "Tortilla de maíz", "Tostada horneada"],
-    "Verduras": ["Acelga", "Berenjena", "Betabel", "Brócoli", "Calabacita", "Chayote", "Chilacayote", "Chile poblano", "Zanahoria"],
-    "Frutas": ["Ciruela", "Durazno", "Fresa", "Manzana", "Melón", "Naranja", "Papaya", "Pera", "Piña", "Plátano", "Sandía", "Uva"],
-    "Grasas": ["Aceite Vegetal", "Aguacate", "Nuez (sin sal)"]
+    "AOAV (Proteína)": ["Clara de huevo (2 pzas)", "Frijol/Lenteja/Soya (1/2 taza)", "Queso Panela (40g)", "Requesón (3 cdas)", "Queso Oaxaca (30g)", "Pollo sin piel (30g)", "Pescado blanco (40g)"],
+    "Cereales": ["Elote desgranado (1/2 taza)", "Papa cocida (1/2 pza)", "Tortilla de maíz (1 pza)", "Tostada horneada (1 pza)"],
+    "Verduras": ["Calabacita", "Chayote", "Jitomate", "Lechuga", "Nopal", "Pepino", "Zanahoria", "Champiñón", "Betabel", "Brócoli"],
+    "Frutas": ["Manzana", "Pera", "Papaya", "Melón", "Plátano", "Sandía", "Fresa", "Mango", "Naranja"],
+    "Grasas": ["Aceite Vegetal (1 cdita)", "Aguacate (1/3 pza)", "Nuez sin sal (7 mitades)"]
 }
 
-# --- LÓGICA DE PORCIONES POR MEAL ---
+# --- LÓGICA DE DISTRIBUCIÓN POR TIEMPO DE COMIDA ---
 def generar_menu():
-    st.subheader("📋 Menú Recomendado")
+    st.subheader("📋 Menú Generado para Hoy")
     
-    # Distribución: 1 AOAV, 1 Cereal, 1/2 Verdura, 1/2 Fruta, 1/2 Grasa (según tabla)
-    col1, col2, col3 = st.columns(3)
-    
-    for col, meal in zip([col1, col2, col3], ["Desayuno", "Comida", "Cena"]):
-        with col:
-            st.markdown(f"**{meal}**")
-            st.write(f"• {random.choice(alimentos['AOAV'])}")
-            st.write(f"• {random.choice(alimentos['Cereales'])}")
-            st.write(f"• {random.choice(alimentos['Verduras'])} (1/2 taza)")
-            st.write(f"• {random.choice(alimentos['Frutas'])} (1/2 taza)")
-            st.info("🥤 + 1/2 Ensure Advance")
+    # Desayuno: 1 AOAV, 1 Cereal, 1/2 Verdura, 1/2 Fruta, 1/2 Grasa (según notas manuales)
+    with st.expander("🌅 DESAYUNO"):
+        st.write(f"**Proteína:** {random.choice(alimentos['AOAV (Proteína)'])}")
+        st.write(f"**Cereal:** {random.choice(alimentos['Cereales'])}")
+        st.write(f"**Vegetal/Fruta:** {random.choice(alimentos['Verduras'])} y {random.choice(alimentos['Frutas'])}")
+        st.info("💊 Tomar: Yakult Light + 1/2 Complejo B + 1/2 Ácido Fólico")
 
-if st.button('🔄 Generar Combinación'):
+    # Comida: 2 AOAV, 1 Cereal, 1/2 Verdura, 1/2 Fruta, 1/2 Grasa
+    with st.expander("☀️ COMIDA"):
+        st.write(f"**Proteína:** {', '.join(random.sample(alimentos['AOAV (Proteína)'], 2))}")
+        st.write(f"**Cereal:** {random.choice(alimentos['Cereales'])}")
+        st.write(f"**Complementos:** {random.choice(alimentos['Verduras'])} y {random.choice(alimentos['Frutas'])}")
+        st.info("🥤 Incluir: 1/2 bote de Ensure Advance")
+
+    # Cena: 1 AOAV, 1 Cereal, 1/2 Verdura, 1/2 Fruta, 1/2 Grasa
+    with st.expander("🌙 CENA"):
+        st.write(f"**Proteína:** {random.choice(alimentos['AOAV (Proteína)'])}")
+        st.write(f"**Cereal:** {random.choice(alimentos['Cereales'])}")
+        st.write(f"**Ligero:** {random.choice(alimentos['Frutas'])}")
+        st.info("🥤 Incluir: 1/2 bote de Ensure Advance")
+
+if st.button('🎲 Generar Nuevas Combinaciones'):
     generar_menu()
 
-st.sidebar.warning("⚠️ Líquidos totales permitidos: 1200 ml/día.")
-st.sidebar.info("Medicinas: Yakult, Complejo B y Ácido Fólico.")
+# --- RECOMENDACIONES GENERALES ---
+st.sidebar.header("⚠️ Indicaciones Médicas")
+st.sidebar.write("- **Líquidos totales:** 1200 ml/día")
+st.sidebar.write("- **Suplementos:** 2 botes de Ensure Advance al día")
+st.sidebar.write("- **Evitar:** Refrescos, embutidos y enlatados")
